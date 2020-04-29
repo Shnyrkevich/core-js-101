@@ -427,7 +427,7 @@ describe('08-conditions-n-loops-tasks', () => {
 
   it.optional('getCommonDirectoryPath should return a common path in the file system', () => {
     [
-      {
+       {
         pathes: ['/web/images/image1.png', '/web/images/image2.png'],
         expected: '/web/images/',
       }, {
