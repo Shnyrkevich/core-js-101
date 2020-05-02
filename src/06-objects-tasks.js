@@ -117,56 +117,75 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  mas: [],
-  string: '',
+  css: '',
+  rank: 0,
   element(value) {
-    this.string = '';
-    this.string = `${value}`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(1);
+    const obj = { ...cssSelectorBuilder };
+    obj.css = this.css + value;
+    obj.rank = 1;
+    return obj;
   },
-
   id(value) {
-    this.string = '';
-    this.string = `#${value}`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(2);
+    const obj = { ...cssSelectorBuilder };
+    const val = `#${value}`;
+    obj.css = this.css + val;
+    obj.rank = 2;
+    return obj;
   },
-
   class(value) {
-    this.string = `.${value}`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(3);
+    const obj = { ...cssSelectorBuilder };
+    const val = `.${value}`;
+    obj.css = this.css + val;
+    obj.rank = 3;
+    return obj;
   },
-
   attr(value) {
-    this.string = `[${value}]`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(4);
+    const obj = { ...cssSelectorBuilder };
+    const val = `[${value}]`;
+    obj.css = this.css + val;
+    obj.rank = 4;
+    return obj;
   },
-
   pseudoClass(value) {
-    this.string = `:${value}`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(5);
+    const obj = { ...cssSelectorBuilder };
+    const val = `:${value}`;
+    obj.css = this.css + val;
+    obj.rank = 5;
+    return obj;
   },
-
   pseudoElement(value) {
-    this.string = `::${value}`;
-    this.mas.push(this.string);
-    return this;
+    this.checkOrder(6);
+    const obj = { ...cssSelectorBuilder };
+    const val = `::${value}`;
+    obj.css = this.css + val;
+    obj.rank = 6;
+    return obj;
   },
-
   combine(selector1, combinator, selector2) {
-    this.string = `${selector1}${combinator}${selector2}`;
-    this.mas.push(this.string);
-    return this;
+    const obj = { ...cssSelectorBuilder };
+    const space = ' ';
+    obj.css = selector1.css + space + combinator + space + selector2.css;
+    return obj;
   },
   stringify() {
-    return this.mas.reduce((a, b) => a + b, '');
+    const css = `${this.css}`;
+    this.css = '';
+    return css;
+  },
+  checkOrder(rank) {
+    if (rank === this.rank && [1, 2, 6].includes(rank)) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (rank < this.rank) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
   },
 };
-
 
 module.exports = {
   Rectangle,
