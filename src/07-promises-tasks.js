@@ -106,15 +106,31 @@ function getFastestPromise(array) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
-  /* const result = [];
-  console.log(array);
-  for (let i = 0; i < array.length; i += 1) {
-    result.push(array[i].then((el) => el));
-  }
-  console.log('after', result, action);
-  return Promise.resolve(result.reduce(action)); */
+function chainPromises(array, action) {
+  const result = Promise.resolve(array.map((el) => el.then((val) => ({ val, status: 'fulfilled' }), (er) => ({ er, status: 'rejected' }))));
+  /* console.log('first', result.then((e) => console.log(e))); */
+  const res = result.then((el) => el.map(async (e) => {
+    const element = await e;
+    /* console.log(element); */
+    if (element.status === 'rejected') {
+      return 0;
+    }
+    return element.val;
+  }));
+  const mas = [];
+  return res.then((e) => {
+    for (let i = 0; i < e.length; i += 1) {
+      e[i].then((el) => mas.push(el));
+    }
+    return Promise.resolve(mas);
+  }).then((re) => Promise.resolve(re.reduce(action)));
+  /* e.then((ee) => {
+    if (ee.status === 'rejected') {
+      return 0;
+    }
+    return ee.val;
+  } */
+  /* console.log(res.then((el) => console.log(el))); */
 }
 
 module.exports = {
