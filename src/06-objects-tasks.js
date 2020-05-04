@@ -21,13 +21,11 @@
  *    console.log(r.getArea());   // => 200
  */
 function Rectangle(width, height) {
-  const rectangle = {};
-  rectangle.width = width;
-  rectangle.height = height;
-  rectangle.getArea = function () {
-    return this.width * this.height;
+  return {
+    width,
+    height,
+    getArea: () => width * height,
   };
-  return rectangle;
 }
 
 
