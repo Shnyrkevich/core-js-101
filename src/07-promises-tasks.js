@@ -108,10 +108,8 @@ function getFastestPromise(array) {
  */
 function chainPromises(array, action) {
   const result = Promise.resolve(array.map((el) => el.then((val) => ({ val, status: 'fulfilled' }), (er) => ({ er, status: 'rejected' }))));
-  /* console.log('first', result.then((e) => console.log(e))); */
   const res = result.then((el) => el.map(async (e) => {
     const element = await e;
-    /* console.log(element); */
     if (element.status === 'rejected') {
       return 0;
     }
@@ -124,13 +122,6 @@ function chainPromises(array, action) {
     }
     return Promise.resolve(mas);
   }).then((re) => Promise.resolve(re.reduce(action)));
-  /* e.then((ee) => {
-    if (ee.status === 'rejected') {
-      return 0;
-    }
-    return ee.val;
-  } */
-  /* console.log(res.then((el) => console.log(el))); */
 }
 
 module.exports = {
